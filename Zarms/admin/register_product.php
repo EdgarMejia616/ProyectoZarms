@@ -9,7 +9,15 @@
 <body>
     <div class="register-container">
         <h1>Registrar Producto</h1>
-        <form method="POST" action="save_product.php" enctype="multipart/form-data">
+
+        <!-- Notificación -->
+        <div id="notification" class="notification" style="display: none;">
+            <span id="notification-message"></span>
+            <span id="notification-close" class="notification-close">&times;</span>
+        </div>
+
+        <form id="product-form" method="POST" action="save_product.php" enctype="multipart/form-data">
+            <!-- Campos del formulario -->
             <div class="input-box">
                 <label for="nombre_producto">Nombre del Producto:</label>
                 <input type="text" id="nombre_producto" name="nombre_producto" required>
@@ -26,8 +34,6 @@
                     <option value="">Selecciona una categoría</option>
                     <?php
                     include 'db_connection.php';
-
-                    // Consultar categorías
                     $result = $conn->query("SELECT categoria_id, categoria FROM categoria");
                     while ($row = $result->fetch_assoc()) {
                         echo "<option value='" . $row['categoria_id'] . "' data-nombre='" . $row['categoria'] . "'>" . $row['categoria'] . "</option>";
@@ -42,7 +48,6 @@
                 <select id="marca_id" name="marca_id" onchange="updateMarca(this)" required>
                     <option value="">Selecciona una marca</option>
                     <?php
-                    // Consultar marcas
                     $result = $conn->query("SELECT marca_id, marca FROM marca");
                     while ($row = $result->fetch_assoc()) {
                         echo "<option value='" . $row['marca_id'] . "' data-nombre='" . $row['marca'] . "'>" . $row['marca'] . "</option>";
@@ -78,17 +83,20 @@
             <div class="input-box">
                 <label for="id_proveedor">Proveedor:</label>
                 <select id="id_proveedor" name="id_proveedor" required>
+                    <option value="">Selecciona un proveedor</option>
                     <?php
-                    // Consultar proveedores
-                    $result = $conn->query("SELECT id_proveedor, nombre_producto FROM proveedor");
+                    $result = $conn->query("SELECT id_proveedor, nombre FROM proveedor");
                     while ($row = $result->fetch_assoc()) {
-                        echo "<option value='" . $row['id_proveedor'] . "'>" . $row['nombre_producto'] . "</option>";
+                        echo "<option value='" . $row['id_proveedor'] . "'>" . $row['nombre'] . "</option>";
                     }
                     ?>
                 </select>
             </div>
 
-            <button type="submit">Registrar Producto</button>
+            <div class="button-container">
+                <button type="submit">Registrar Producto</button>
+                <a href="view_products.php" class="view-table-button">Ver Tabla</a>
+            </div>
         </form>
     </div>
 
@@ -102,6 +110,38 @@
             var marcaNombre = select.options[select.selectedIndex].getAttribute('data-nombre');
             document.getElementById('marca').value = marcaNombre;
         }
+
+        // Mostrar notificación
+        function showNotification(message) {
+            var notification = document.getElementById('notification');
+            document.getElementById('notification-message').textContent = message;
+            notification.style.display = 'block';
+        }
+
+        // Cerrar notificación
+        document.getElementById('notification-close').onclick = function() {
+            document.getElementById('notification').style.display = 'none';
+            document.getElementById('product-form').reset(); // Limpiar el formulario
+        };
+
+        // Manejar envío del formulario
+        document.getElementById('product-form').onsubmit = function(event) {
+            event.preventDefault(); // Prevenir el envío por defecto del formulario
+
+            // Usar fetch para enviar el formulario de manera asíncrona
+            var formData = new FormData(this);
+            fetch(this.action, {
+                method: 'POST',
+                body: formData
+            }).then(response => response.text())
+              .then(result => {
+                if (result.includes('Producto registrado exitosamente')) {
+                    showNotification('Producto registrado exitosamente.');
+                } else {
+                    showNotification('Error al registrar el producto.');
+                }
+              });
+        };
     </script>
 </body>
 </html>

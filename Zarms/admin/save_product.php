@@ -10,8 +10,6 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 // Verificar la conexión
 if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
-} else {
-    echo "Conexión exitosa.<br>";
 }
 
 // Comprobar si se ha enviado el formulario
@@ -60,7 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Verificar si $uploadOk está en 0 debido a un error
         if ($uploadOk == 0) {
             echo "El archivo no se subió.<br>";
-        // Si todo está bien, intentar subir el archivo
         } else {
             if (move_uploaded_file($_FILES["imagen"]["tmp_name"], $target_file)) {
                 $imagen = $target_file; // Guardar la ruta del archivo
@@ -83,7 +80,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         die("Error en la preparación de la consulta: " . $conn->error);
     }
 
-    // Corrige los tipos de parámetros en bind_param
     $stmt->bind_param("ssdissssssi", $nombre_producto, $precio, $categoria_id, $categoria_nombre, $marca_id, $marca_nombre, $descripcion, $cantidad, $imagen, $estado, $id_proveedor);
 
     if ($stmt->execute()) {
