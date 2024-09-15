@@ -130,6 +130,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #28a745;
             margin-bottom: 15px;
         }
+
+        /* Estilos para el modal */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgb(0,0,0); 
+            background-color: rgba(0,0,0,0.4); 
+            padding-top: 60px; 
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; 
+            max-width: 300px; 
+            text-align: center;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -140,7 +179,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p class="error"><?php echo $error; ?></p>
             <?php endif; ?>
             <?php if ($success): ?>
-                <p class="success"><?php echo $success; ?></p>
+                <p class="success" id="success-message"><?php echo $success; ?></p>
+                <!-- Modal -->
+                <div id="successModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" id="closeModal">&times;</span>
+                        <p><?php echo $success; ?></p>
+                    </div>
+                </div>
             <?php endif; ?>
             <form method="POST" action="register.php">
                 <div class="input-box">
@@ -159,5 +205,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            var successMessage = document.getElementById('success-message').textContent;
+            if (successMessage) {
+                var modal = document.getElementById('successModal');
+                var span = document.getElementById('closeModal');
+
+                modal.style.display = 'block';
+
+                span.onclick = function() {
+                    modal.style.display = 'none';
+                    window.location.href = 'index_admin.php'; // Redirige al cerrar el modal
+                }
+
+                window.onclick = function(event) {
+                    if (event.target == modal) {
+                        modal.style.display = 'none';
+                        window.location.href = 'index_admin.php'; // Redirige al cerrar el modal
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
