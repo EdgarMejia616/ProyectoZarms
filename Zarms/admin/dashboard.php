@@ -282,18 +282,21 @@ $conn->close();
     <div class="dashboard-container">
         <h1>Bienvenido al panel de administración</h1>
         <nav class="nav-bar">
-            <ul>
-                <li><a href="register_product.php"><i class="fas fa-box"></i>Productos</a></li>
-                <li><a href="register_inventory.php"><i class="fas fa-warehouse"></i>Inventario</a></li>
-                <li><a href="view_orders.php"><i class="fas fa-list-alt"></i>Pedidos</a></li>
-                <li><a href="view_ventas.php"><i class="fas fa-chart-line"></i>Ventas</a></li>
-                <li><a href="view_compras.php"><i class="fas fa-receipt"></i>Compras</a></li>
-                <li><a href="#" id="openModal"><i class="fas fa-info-circle"></i>Resumen de Inventario</a></li>
-            </ul>
-            <form method="POST" action="logout.php">
-                <button type="submit"><i class="fas fa-sign-out-alt"></i>Cerrar Sesión</button>
-            </form>
-        </nav>
+    <ul>
+        <li><a href="register_product.php"><i class="fas fa-box"></i>Productos</a></li>
+        <li><a href="register_inventory.php"><i class="fas fa-warehouse"></i>Inventario</a></li>
+        <li><a href="register_categoria.php"><i class="fas fa-tag"></i>Categoría</a></li>
+        <li><a href="view_orders.php"><i class="fas fa-list-alt"></i>Pedidos</a></li>
+        <li><a href="view_ventas.php"><i class="fas fa-chart-line"></i>Ventas</a></li>
+        <li><a href="view_compras.php"><i class="fas fa-receipt"></i>Compras</a></li>
+        <li><a href="registrar_marca.php"><i class="fas fa-cogs"></i>Marca</a></li> <!-- Nuevo campo añadido -->
+        <li><a href="#" id="openModal"><i class="fas fa-info-circle"></i>Resumen Inventario</a></li>
+    </ul>
+    <form method="POST" action="logout.php">
+        <button type="submit"><i class="fas fa-sign-out-alt"></i>Cerrar Sesión</button>
+    </form>
+</nav>
+
         <!-- Imagen grande debajo de la barra de navegación -->
         <div class="image-container">
             <img src="uploads/logo.jpg" alt="Imagen del Dashboard">

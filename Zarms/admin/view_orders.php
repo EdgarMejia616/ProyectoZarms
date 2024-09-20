@@ -197,6 +197,7 @@
                         <th>Imagen</th>
                         <th>Precio</th>
                         <th>Cantidad</th>
+                        <th>Total</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -216,7 +217,7 @@
                     }
 
                     // Consulta para obtener todos los pedidos
-                    $sql = "SELECT id_pedido, id_producto, nombre_producto, imagen, precio, cantidad FROM pedido";
+                    $sql = "SELECT id_pedido, id_producto, nombre_producto, imagen, precio, cantidad,total FROM pedido";
                     $result = $conn->query($sql);
 
                     // Verificar si hay resultados
@@ -230,10 +231,11 @@
                             echo "<td><img src='" . $row["imagen"] . "' alt='" . $row["nombre_producto"] . "'></td>";
                             echo "<td>" . $row["precio"] . "</td>";
                             echo "<td>" . $row["cantidad"] . "</td>";
+                            echo "<td>" . $row["total"] . "</td>";
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='6'>No hay pedidos disponibles</td></tr>";
+                        echo "<tr><td colspan='7'>No hay pedidos disponibles</td></tr>";
                     }
 
                     // Cerrar conexión

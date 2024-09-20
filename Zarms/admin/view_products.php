@@ -333,19 +333,38 @@
         </div>
     </div>
 
-  <!-- Formulario emergente -->
+ <!-- Formulario emergente -->
 <div class="modal-bg"></div>
 <div class="modal" id="modal">
     <button class="close-modal">X</button>
     <h2>Modificar/Eliminar Producto</h2>
     <form id="modify-form" method="POST" action="modify_product.php">
         <input type="hidden" id="product-id" name="product-id">
+        
         <label for="new-price">Nuevo Precio:</label>
-        <input type="number" id="new-price" name="new-price">
+        <input type="number" id="new-price" name="new-price" step="0.01">
         <br> <!-- Salto de línea añadido -->
+
         <label for="new-quantity">Nueva Cantidad:</label>
         <input type="number" id="new-quantity" name="new-quantity">
         <br> <!-- Salto de línea añadido -->
+
+        <label for="new-category">Nueva Categoría:</label>
+        <select id="new-category" name="new-category">
+            <?php
+            $sql = "SELECT categoria_id, categoria FROM categoria";
+            $result = $conn->query($sql);
+            while ($row = $result->fetch_assoc()) {
+                echo "<option value='" . $row['categoria_id'] . "'>" . $row['categoria'] . "</option>";
+            }
+            ?>
+        </select>
+        <br> <!-- Salto de línea añadido -->
+        
+        <label for="new-category-name">Nuevo Nombre de Categoría:</label>
+        <input type="text" id="new-category-name" name="new-category-name">
+        <br> <!-- Salto de línea añadido -->
+        
         <div class="button-group">
             <button type="submit">Modificar</button>
             <form id="delete-form" method="POST" action="delete_product.php">
@@ -355,7 +374,6 @@
         </div>
     </form>
 </div>
-
 
     <script>
         const rows = document.querySelectorAll('table tbody tr');
