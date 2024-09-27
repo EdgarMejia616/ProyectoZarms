@@ -70,7 +70,7 @@ if (isset($_POST['confirmar'])) {
         // Redirigir con una notificación
         echo '<script>
                 alert("Pedido confirmado");
-                window.location.href = "index_cliente.php";
+                window.location.href = "checkout.php";
               </script>';
         exit();
     } else {

@@ -21,29 +21,81 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
+// Capturar parámetros de orden y límite
+$sort_order = isset($_GET['sort']) ? $_GET['sort'] : 'latest';
+$limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+
+// Construir la cláusula de ordenamiento basada en el parámetro "sort"
+switch ($sort_order) {
+    case 'popularity':
+        $order_by = 'ORDER BY popularity DESC';
+        break;
+    case 'rating':
+        $order_by = 'ORDER BY rating DESC';
+        break;
+    case 'latest':
+    default:
+        $order_by = 'ORDER BY created_at DESC';
+        break;
+    }
 // Consulta para obtener productos de la categoría "Alimentos" y estado "Activo"
-$sql = "SELECT nombre_producto, precio, descripcion, imagen, estado FROM producto WHERE categoria = 'Hogar' AND estado = 'Activo'";
+$sql = "SELECT nombre_producto, precio, descripcion, imagen, estado FROM producto WHERE estado = 'Activo'";
 $result = $conn->query($sql);
 
 // Suponiendo que la ruta de las imágenes es 'admin/uploads/'
 $image_path = 'http://localhost/Zarms/admin/';
 ?>
 <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productos del Hogar</title>
-    <link rel="stylesheet" href="css/styleindex_cliente.css">
-    <link rel="stylesheet" href="css/promocion.css">
-    <link rel="stylesheet" href="css/prueba.css">
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zarms - Compras en linea</title>
+    <script
+      src="https://kit.fontawesome.com/7b5fb2de65.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="css/promocion.css" />
+    <link rel="stylesheet" href="css/prueba.css" />
+    <link rel="stylesheet" href="css/styleindex_cliente.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="css/style.css" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/7b5fb2de65.js" crossorigin="anonymous"></script>
     
-</head>
-<body>
-   
+  </head>
+  <body>
+ <!-- <header class="header">
+  <div class="container">
+    <div class="logo__container">
+      <div class="logogg">
+        <img src="img/logo.png" alt="Logo" class="logo-img">
+      </div>
+    </div>
+    <form class="search-form" action="buscar.php" method="get">
+  <div class="search-container">
+    <input type="text" id="search-input" name="query" placeholder="Buscar Electrodomésticos y más..." class="search-input" required>
+    <button type="button" class="clear-button" onclick="clearSearch()">✖</button>
+    <button type="submit" class="search-button">🔍</button>
+  </div>
+</form>
+
+
+    <nav class="nav">
+      <ul>
+      <li>
+    <a href="carrito.php" class="profile-btn">
+        <i class="fas fa-shopping-cart"></i>
+    </a>
+</li>
+
+        <li><a href="perfil.php" class="profile-btn">  <i class="fas fa-user"></i></a></li>
+        <a href="logout.php" id="cerrar-sesion" class="logout-btn">
+    <i class="fas fa-sign-out-alt"></i> <!-- Ícono de cerrar sesión -->
+<!--</a>
+      </ul>
+    </nav>
+  </div>
+</header> -->
+
 <!--prueba dillan   -->
  <!-- Topbar Start -->
  <div class="container-fluid">
@@ -96,7 +148,7 @@ $image_path = 'http://localhost/Zarms/admin/';
         </div>
         <div class="row align-items-center bg-light py-3 px-xl-5 d-none d-lg-flex">
             <div class="col-lg-4">
-            <a href="index_cliente.php" class="text-decoration-none">
+                <a href="index_cliente.php" class="text-decoration-none">
                     <span class="h1 text-uppercase text-primary bg-dark px-2">ZAR</span>
                     <span class="h1 text-uppercase text-dark bg-primary px-2 ml-n1">MS</span>
                 </a>
@@ -122,8 +174,8 @@ $image_path = 'http://localhost/Zarms/admin/';
         </div>
     </div>
 
-     <!-- Navbar Start -->
-     <div class="container-fluid bg-dark mb-30">
+    <!-- Navbar Start -->
+    <div class="container-fluid bg-dark mb-30">
         <div class="row px-xl-5">
         <div class="col-lg-3 d-none d-lg-block">
     <a class="btn d-flex align-items-center justify-content-between bg-primary w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; padding: 0 30px;">
@@ -158,7 +210,6 @@ $image_path = 'http://localhost/Zarms/admin/';
 
 <!-- Enlaza Bootstrap JS -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
             <div class="col-lg-9">
                 <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-3 py-lg-0 px-0">
                     <a href="" class="text-decoration-none d-block d-lg-none">
@@ -170,9 +221,9 @@ $image_path = 'http://localhost/Zarms/admin/';
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
-                            <a href="index_cliente.php" class="nav-item nav-link active">Inicio</a>
+                        <a href="index_cliente.php" class="nav-item nav-link active">Inicio</a>
                             <a href="shop.php" class="nav-item nav-link">Lista de Productos</a>
-                            <a href="checkout.php" class="nav-item nav-link">Carrito</a>
+                            <a href="carrito.php" class="nav-item nav-link">Carrito</a>
                             <a href="Historial.php" class="nav-item nav-link">Pedidos</a>
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages <i class="fa fa-angle-down mt-1"></i></a>
@@ -183,8 +234,8 @@ $image_path = 'http://localhost/Zarms/admin/';
                             </div>
                             <a href="contact.html" class="nav-item nav-link">Contacto</a>
                         </div>
-                        
                         <?php
+
 // Establece la conexión a la base de datos
 $servername = "b9adcso2ssjiqbhrwytf-mysql.services.clever-cloud.com";
 $username = "uzd4kdukd76ffseo";
@@ -225,6 +276,7 @@ try {
     $total_products = 0; // Asegúrate de establecer un valor predeterminado
 } 
 ?>
+
 <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
     <a href="carrito.php" class="btn px-0 ml-3">
         <i class="fas fa-shopping-cart text-primary"></i>
@@ -234,6 +286,7 @@ try {
     </a>
 </div>
 
+
                     </div>
                 </nav>
             </div>
@@ -241,15 +294,14 @@ try {
     </div>
     <!-- Navbar End -->
 
-
-<!-- prelista Start -->
-<div class="container-fluid">
+    <!-- prelista Start -->
+    <div class="container-fluid">
         <div class="row px-xl-5">
             <div class="col-12">
                 <nav class="breadcrumb bg-light mb-30">
                     <a class="breadcrumb-item text-dark" href="#">Home</a>
                     <a class="breadcrumb-item text-dark" href="#">Shop</a>
-                    <span class="breadcrumb-item active">List of household products</span>
+                    <span class="breadcrumb-item active">Shop List</span>
                 </nav>
             </div>
         </div>
@@ -264,38 +316,71 @@ try {
                 <!-- Price Start -->
                 <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filtrar por Precio</span></h5>
                 <div class="bg-light p-4 mb-30">
-                    <form>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" checked id="price-all">
-                            <label class="custom-control-label" for="price-all">Todos los precios</label>
-                            <span class="badge border font-weight-normal">1000</span>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" id="price-1">
-                            <label class="custom-control-label" for="price-1">L0 - L100</label>
-                            <span class="badge border font-weight-normal">150</span>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" id="price-2">
-                            <label class="custom-control-label" for="price-2">L100 - L200</label>
-                            <span class="badge border font-weight-normal">295</span>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" id="price-3">
-                            <label class="custom-control-label" for="price-3">L200 - L300</label>
-                            <span class="badge border font-weight-normal">246</span>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" id="price-4">
-                            <label class="custom-control-label" for="price-4">L300 - L400</label>
-                            <span class="badge border font-weight-normal">145</span>
-                        </div>
-                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
-                            <input type="checkbox" class="custom-control-input" id="price-5">
-                            <label class="custom-control-label" for="price-5">L400 - L500</label>
-                            <span class="badge border font-weight-normal">168</span>
-                        </div>
-                    </form>
+                <form method="GET" action="filtrar_productos.php">
+                <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+    <input type="checkbox" class="custom-control-input" id="price-all" name="precio[]" value="all" checked>
+    <label class="custom-control-label" for="price-all">Todos los precios</label>
+    <span class="badge border font-weight-normal">1000</span>
+</div>
+<div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+    <input type="checkbox" class="custom-control-input" id="price-1" name="precio[]" value="0-100">
+    <label class="custom-control-label" for="price-1">L0 - L100</label>
+    <span class="badge border font-weight-normal">150</span>
+</div>
+<div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+    <input type="checkbox" class="custom-control-input" id="price-2" name="precio[]" value="100-200">
+    <label class="custom-control-label" for="price-2">L100 - L200</label>
+    <span class="badge border font-weight-normal">295</span>
+</div>
+<div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+    <input type="checkbox" class="custom-control-input" id="price-3" name="precio[]" value="200-300">
+    <label class="custom-control-label" for="price-3">L200 - L300</label>
+    <span class="badge border font-weight-normal">246</span>
+</div>
+<div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+    <input type="checkbox" class="custom-control-input" id="price-4" name="precio[]" value="300-400">
+    <label class="custom-control-label" for="price-4">L300 - L400</label>
+    <span class="badge border font-weight-normal">145</span>
+</div>
+<div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+    <input type="checkbox" class="custom-control-input" id="price-5" name="precio[]" value="400-500">
+    <label class="custom-control-label" for="price-5">L400 - L500</label>
+    <span class="badge border font-weight-normal">168</span>
+</div>
+<button type="submit" class="btn btn-primary mt-3">Aplicar Filtros</button>
+
+<!-- JavaScript para manejar la selección de "Todos los precios" -->
+<script>
+    // Función para desmarcar todos los checkbox excepto el seleccionado
+    function uncheckAllExcept(selectedCheckbox) {
+        document.querySelectorAll('input[name="precio[]"]').forEach(function(checkbox) {
+            if (checkbox !== selectedCheckbox) {
+                checkbox.checked = false;
+            }
+        });
+    }
+
+    // Evento para cuando se selecciona "Todos los precios"
+    document.getElementById('price-all').addEventListener('change', function() {
+        if (this.checked) {
+            uncheckAllExcept(this);
+        }
+    });
+
+    // Eventos para cuando se seleccionan otros rangos de precios
+    document.querySelectorAll('input[name="precio[]"]').forEach(function(checkbox) {
+        if (checkbox.id !== 'price-all') {
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    document.getElementById('price-all').checked = false;
+                }
+            });
+        }
+    });
+</script>
+
+</form>
+
                 </div>
                 <!-- Price End -->
                 
@@ -376,8 +461,9 @@ try {
                 <!-- Size End -->
             </div>
             <!-- Shop Sidebar End -->
-
              
+            
+           
 
             <!-- Shop Product Start -->
             <div class="col-lg-9 col-md-8">
@@ -408,24 +494,22 @@ try {
                             </div>
                         </div>
                     </div>
-    <!--inicio de productos -->
-    <?php
-                    if ($result->num_rows > 0) {
-                    // Dentro del bucle while para mostrar los productos
-                    while ($row = $result->fetch_assoc()) {
-                      // Construye la URL de la imagen
-                     $image_url = $image_path . htmlspecialchars($row['imagen']);
-                     // Reemplaza los guiones bajos en el nombre del producto
-                    $nombre_producto = str_replace('_', ' ', htmlspecialchars($row['nombre_producto']));
-                     $precio = htmlspecialchars($row['precio']);
-                     $descripcion = htmlspecialchars($row['descripcion']);
-                     $estado = htmlspecialchars($row['estado']);
-                     ?>
-                     <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
-                        <div class="product-item bg-light mb-4">
-                           <div class="product-img position-relative overflow-hidden">
-                    <img class="img-fluid w-100" src="<?php echo $image_url; // Verificar la URL completa
-                     ?>" alt="<?php echo $nombre_producto; ?>">
+                    
+                    
+                    <!--inicio de productos -->
+                    <?php
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $image_url = $image_path . htmlspecialchars($row['imagen']);
+        $nombre_producto = str_replace('_', ' ', htmlspecialchars($row['nombre_producto']));
+        $precio = htmlspecialchars($row['precio']);
+        $descripcion = htmlspecialchars($row['descripcion']);
+        $estado = htmlspecialchars($row['estado']);
+        ?>
+        <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
+            <div class="product-item bg-light mb-4">
+                <div class="product-img position-relative overflow-hidden">
+                    <img class="img-fluid w-100" src="<?php echo $image_url; ?>" alt="<?php echo $nombre_producto; ?>">
                     <div class="product-action">
                         <a class="btn btn-outline-dark btn-square" href="carrito.php?nombre_producto=<?php echo urlencode($row['nombre_producto']); ?>&precio=<?php echo urlencode($row['precio']); ?>&imagen=<?php echo urlencode($row['imagen']); ?>"><i class="fa fa-shopping-cart"></i></a>
                         <a class="btn btn-outline-dark btn-square" href=""><i class="far fa-heart"></i></a>
@@ -438,7 +522,6 @@ try {
                     <div class="d-flex align-items-center justify-content-center mt-2">
                         <h5>L<?php echo $precio; ?></h5>
                     </div>
-                    
                     <p><?php echo $descripcion; ?></p>
                     <p>Estado: <?php echo $estado; ?></p>
                 </div>
@@ -446,11 +529,12 @@ try {
         </div>
         <?php
     }
-    } else {
-    echo '<p>No se encontraron productos.</p>';
-        }
-        $conn->close();
-        ?>
+} else {
+    echo '<p>No se encontraron productos en este rango de precios.</p>';
+}
+$conn->close();
+?>
+
                
                
             <!-- Shop Product End -->
@@ -458,7 +542,10 @@ try {
     </div>
     <!-- compras fin End -->
 
-     <!--footer -->
+
+
+
+    <!--footer -->
  <!-- Footer Start -->
  <div class="container-fluid bg-dark text-secondary mt-5 pt-5">
         <div class="row px-xl-5 pt-5">
@@ -529,7 +616,13 @@ try {
         </div>
     </div>
     <!-- Footer End -->
-</body>
+
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+<script src="script.js"></script>
+
 <script>
   function clearSearch() {
     // Almacena un estado en el localStorage para indicar que el campo debe ser limpiado
@@ -551,5 +644,8 @@ try {
   // Llama a initializeSearch cuando la página se carga
   window.onload = initializeSearch;
 </script>
+
+
+
 
 </html>
